@@ -1,0 +1,153 @@
+#+STARTUP: beamer
+#+TITLE:     Preprocesamiento de la información
+#+AUTHOR:    \href{mailto:julio.waissman@unison.mx}{Julio Waissman}
+#+DATE:      9 de marzo de 2018
+#+BEAMER_HEADER: \subtitle{Curso de procesamiento de lenguaje natural}
+#+BEAMER_HEADER: \institute[UNaM/MTI]{Maestría en Tecnologías de la Información\\Universidad Nacional de Misiones}
+# #+BEAMER_HEADER: \titlegraphic{\includegraphics[height=1.5cm]{~/.emacs.d/julio/org/letragrama.png}}
+#+BEAMER_HEADER: \titlegraphic{\includegraphics[width=0.8\textwidth]{imagenes/cabecera.png}}
+
+
+#+DESCRIPTION: PLN para la MTI de la UNaM
+#+LANGUAGE:  es
+
+#+INCLUDE: "setup.org"
+* Algo acerca de mi                                                 :B_frame:
+  :PROPERTIES:
+  :BEAMER_env: frame
+  :END:
++ Profesor-Investigador Universidad de Sonora \vfill
++ Doctorado en /Sistemas Automáticos/ INPT \vfill
++ Grupo de trabajo en Ciencia de Datos \vfill
++ Algunos proyectos de investigación \vfill
++ Algunos proyectos de vinculación \vfill
+
+* ¿Que es PLN?                                                      :B_frame:
+  :PROPERTIES:
+  :BEAMER_env: frame
+  :END:
+
++ *Segun /Wikipedia/*
+#+BEGIN_QUOTE
+Campo de las ciencias de la computación, inteligencia artificial y
+lingüística que estudia las interacciones entre las computadoras y el
+lenguaje humano.
+#+END_QUOTE
+
++ *Segun /Copestake/*
+#+BEGIN_QUOTE
+Procesamiento automático (o semi-automático) del lenguaje humano
+#+END_QUOTE
+
++ La mayoría de los autores de libros de texto (y cursos)
+  más que definirlo lo contextualizan. \vfill
+
++ Tambien se conoce como /Lingüística computacional/.
+
+* Temas de PLN                                                      :B_frame:
+  :PROPERTIES:
+  :BEAMER_env: frame
+  :END:
+
+  #+ATTR_LATEX: :float t
+  #+ATTR_LaTeX: :width \textwidth
+  [[./imagenes/nlp_temas.png]]
+#+BEGIN_CENTER
+#+BEGIN_LATEX
+\tiny{Fuente https://ontotext.com/top-5-semantic-technology-trends-2017/}
+#+END_LATEX
+#+END_CENTER
+
+* ¿Porqué estudiar PLN?                                             :B_frame:
+  :PROPERTIES:
+  :BEAMER_env: frame
+  :END:
+
+  #+ATTR_LATEX: :float t
+  #+ATTR_LaTeX: :width .8\textwidth
+  [[./imagenes/NLP-17-chart.jpg]]
+#+BEGIN_CENTER
+#+BEGIN_LATEX
+\tiny{Fuente https://www.tractica.com/newsroom/press-releases/natural-language-processing-market-to-reach-22-3-billion-by-2025/}
+#+END_LATEX
+
+#+END_CENTER
+
+
+* ¿Porqué estudiar PLN?                                             :B_frame:
+  :PROPERTIES:
+  :BEAMER_env: frame
+  :END:
+
+  #+ATTR_LATEX: :float t
+  #+ATTR_LaTeX: :width .8\textwidth
+  [[./imagenes/mercado_latin.png]]
+#+BEGIN_CENTER
+#+BEGIN_LATEX
+\tiny{Fuente: https://www.statista.com/statistics/607931/latin-america-natural-language-processing-market-revenues/}
+#+END_LATEX
+
+#+END_CENTER
+
+
+* Formas de hacer PLN                                               :B_frame:
+  :PROPERTIES:
+  :BEAMER_env: frame
+  :END:
+
++ Basado en reglas
+  - Expresiones regulares
+  - Gramáticas libres de contexto \vfill
+
++ Probabilista
+  - Modelos de $n$-gramas
+  - Clasificadores lineales
+  - Métodos basados en maximización de la verosimilitud \vfill
+
++ Aprendizaje profundo
+  - Redes convolucionales
+  - Redes recurrentes \vfill
+
+
+
+* ¿Que esperar de este curso?                                       :B_frame:
+  :PROPERTIES:
+  :BEAMER_env: frame
+  :END:
+
+1. Una noción general del PLN \vfill
+
+2. Una idea general de las técnicas y herramientas más populares para
+   las tareas de PLN seleccionadas en el curso. \vfill
+
+3. Conocimiento superficial de /como/ funcionan algunos de los modelos
+   más importantes (o más populares) de PLN \vfill
+
+4. Conocer y saber aplicar las herramientas existentes en /python/
+   para casos de estudio \vfill
+
+
+* Temas del curso                                                   :B_frame:
+  :PROPERTIES:
+  :BEAMER_env: frame
+  :END:
+
+1. Normalización de la información \vfill
+
+2. Clasificación de documentos \vfill
+
+3. Modelos probabilistas secuenciales \vfill
+
+4. Modelos de semántica distribuida \vfill
+
+5. Modelado de tópicos \vfill
+
+* Planeación                                                        :B_frame:
+  :PROPERTIES:
+  :BEAMER_env: frame
+  :END:
+
++ Explicación general de los temas \vfill
++ Ejemplos de aplicación y/o modelado al final de cada explicación \vfill
++ Trabajos prácticos para reforzar cada uno de los temas principales \vfill
++ Un proyecto final que permita enfrentarse a la busqueda y/o generación de datos \vfill

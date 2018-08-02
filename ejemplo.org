@@ -1,0 +1,641 @@
+#+STARTUP: beamer
+#+TITLE:     Alpha Zero
+#+AUTHOR:    \href{mailto:julio.waissman@unison.mx}{Julio Waissman}
+#+DATE:      9 de marzo de 2018
+#+BEAMER_HEADER: \subtitle{¿Cómo y porqué funciona?}
+#+BEAMER_HEADER: \institute[Unison]{Semana Nacional de Investigación y Docencia en Matemáticas\\Universidad de Sonora}
+# #+BEAMER_HEADER: \titlegraphic{\includegraphics[height=1.5cm]{~/.emacs.d/julio/org/letragrama.png}}
+#+BEAMER_HEADER: \titlegraphic{\includegraphics[width=\textwidth,height=.3\textheight]{portada.png}}
+
+
+# Agrega una imagen en media presentación
+
+#+DESCRIPTION: Presentación para la SIDM
+#+LANGUAGE:  es
+
+#+INCLUDE: "~/.emacs.d/julio/org/beamer-setup.org"
+
+* XX Aniversario de la Lic. en Ciencias de la Computación           :B_frame:
+  :PROPERTIES:
+  :BEAMER_env: frame
+  :END:
+
+  #+ATTR_LATEX: :float t
+  #+ATTR_LaTeX: :width .9\textwidth
+  [[./imagenes/baile_posada.jpg]]
+
+
+* Plan de la presentación                                           :B_frame:
+  :PROPERTIES:
+  :BEAMER_env: frame
+  :END:
+
+1. ¿Qué es /Alpha Zero/?\vfill
+2. ¿Cómo funciona?
+   - Aprendizaje por refuerzo
+   - Árbol de búsqueda Monte Carlo\vfill
+3. ¿Porqué funciona?
+   - Redes neuronales convolucionales
+   - /Tensorflow/ y TPUs\vfill
+4. Algunas consideraciones\vfill
+
+
+
+* El juego de Go                                                    :B_frame:
+  :PROPERTIES:
+  :BEAMER_env: frame
+  :END:
+
+- Comienza en un tablero vacío de 19 \times 19
+- Jugadores colocan /piedras/ negras y blancas por turnos
+- Si una parte conectada es rodeada por las /piedras/ del oponente, se eliminan del tablero
+- No se puede repetir posición en el tablero (regla de Ko)
+
+
+
+  #+ATTR_LATEX: :float t
+  #+ATTR_LaTeX: :width .99\textwidth
+  [[./imagenes/go_diag.png]]
+
+
+
+
+
+
+* El juego de Go                                                    :B_frame:
+  :PROPERTIES:
+  :BEAMER_env: frame
+  :END:
+
+- La partida se termina cuando ambos jugadores pasan turno
+- Se cuentan los espacios dominados y piezas capturadas
+- Al jugador de las piedras blancas se le otorgan 7.5 puntos (Komi)
+
+
+
+
+  #+ATTR_LATEX: :float t
+  #+ATTR_LaTeX: :width .4\textwidth
+  [[./imagenes/go_territorio.png]]
+
+
+
+
+
+# * Ajedrez y jugadores computacionales                               :B_frame:
+#   :PROPERTIES:
+#   :BEAMER_env: frame
+#   :END:
+
+
+# - 1968 :: David Levy apuesta 1250 libras que en 10 años no le ganará una computadora\vfill
+# - 1978 :: Levy gana su apuesta\vfill
+# - 1988 :: /Deep Thought/ es el primer programa en ganarle a un gran maestro (Bent Larsen)\vfill
+# - 1989 :: Levy pierde frente a /Deep Thought/ (4-0)\vfill
+# - 1997 :: /Deep Blue/ derrota a G. Kasparov\vfill
+# - 2016 :: Ningún jugador humano puede competir con los mejores jugadores computacionales\vfill
+
+
+* Go y jugadores computacionales                                    :B_frame:
+  :PROPERTIES:
+  :BEAMER_env: frame
+  :END:
+
+- 1997 :: John Tromp apuesta 1000 dólares que en 10 años no le ganará una computadora\vfill
+- 2007 :: Tromp gana su apuesta\vfill
+- 2015 :: /AlphaGo Fan/ es el primer programa computacional en derrotar a un jugador profesional (Fan Hui)\vfill
+- 2016 :: /AlphaGo Lee/ es el primer programa computacional en derrotar al campeón mundial (Lee Sedol)\vfill
+- 2017 :: /AlphaGo Master/ gana 60 partidas contra profesionales, incluyendo 3 a el campeón mundial (Ke Jie)\vfill
+
+
+* AlphaGo Zero                                                      :B_frame:
+  :PROPERTIES:
+  :BEAMER_env: frame
+  :END:
+
+- Algoritmo que no usa conocimiento experto
+- Octubre de 2017
+
+#+ATTR_LATEX: :float t
+#+ATTR_LaTeX: :width 0.99\textwidth
+[[./imagenes/alphagozero.pdf]]
+
+
+
+* Alpha Zero                                                        :B_frame:
+  :PROPERTIES:
+  :BEAMER_env: frame
+  :END:
+
+- Algoritmo con arquitectura genérica
+- Diciembre de 2017
+
+
+#+ATTR_LATEX: :float t
+#+ATTR_LaTeX: :width 0.99\textwidth
+[[./imagenes/alphazero.pdf]]
+
+
+* Minimax: La estrategia ganadora (hasta ahora...)                  :B_frame:
+  :PROPERTIES:
+  :BEAMER_env: frame
+  :END:
+
+#+ATTR_LATEX: :float t
+#+ATTR_LaTeX: :width 0.7\textwidth
+[[./imagenes/minimax.jpg]]
+
+\[
+\max(1, \min(-1, \ldots), \min(-1, \ldots))
+\]
+
+
+* Características del minimax                                       :B_frame:
+  :PROPERTIES:
+  :BEAMER_env: frame
+  :END:
+
+- La poda \alpha -- \beta requiere conocimiento experto
+  para ordenar las jugadas\vfill
+
+- La evaluación de la utilidad requiere conocimiento experto
+  en forma de características (\phi(s))\vfill
+
+- El conocimiento experto puede obtenerse a partir de bases
+  de datos (por aprendizaje supervisado)\vfill
+
+- Para cada problema diferente es necesario realizar muchas
+  operaciones de optimización (i.e. estructuras de datos
+  para la representación del estado).\vfill
+
+
+* ¿Como funciona Alpha Zero?                                        :B_frame:
+  :PROPERTIES:
+  :BEAMER_env: frame
+  :END:
+
+#+Beamer: \framesubtitle{Aprendizaje por refuerzo}
+
+#+ATTR_LATEX: :float t
+#+ATTR_LaTeX: :width 0.70\textwidth
+[[./imagenes/rl.png]]
+
+*Objetivo*: Encontrar \pi que maximice la esperanza de \(R_t = \sum_{i = 0}^T \gamma^i r_{t+1+i}\)
+
+
+
+* ¿Cómo funciona Alpha Zero?                                        :B_frame:
+  :PROPERTIES:
+  :BEAMER_env: frame
+  :END:
+
+#+Beamer: \framesubtitle{Iteración de política}
+
+Ajusta los parámetros \theta de la función
+
+\[
+(\bm{p}, v) = f_\theta(s),
+\]
+
+
+- \(\bm{p}\) es el vector de probabilidad de seleccionar una acción \(a\)
+  en el estado \(s\), \(p_a = \Pr(a|s)\),
+- \(v\) es la probabilidad que el jugador actual gane el juego.
+- Los parámetros \theta se ajustan entre una política /a priori/
+  (\(\bm{p}\)) y otra más fuerte (\pi), aproximada por MCTS.
+
+
+
+
+* ¿Cómo funciona Alpha Zero?                                        :B_frame:
+  :PROPERTIES:
+  :BEAMER_env: frame
+  :END:
+#+Beamer: \framesubtitle{Iteración de política}
+
+  1. Para cada iteración:
+     1. Genera muchos juegos.
+     2. En cada juego:
+	1. Para cada paso, encuentra la jugada a partir de
+           una política generada por MCTS y \(f_\theta\).
+        2. Al terminar el juego se obtiene \( r_T \in \{-1, 1\} \).
+	3. Para cada paso se almacena \( (s_k, \pi(s_k), z_k) \), donde \(z_k = \pm r_T\), en una BdD de /replay/.
+     3. Toma una muestra amplia de la BdD de /replay/
+     4. Optimiza \theta utilizando un método de descenso de gradiente donde:
+	\[
+	LOSS(\theta) = \quad (z - v)^2 \quad - \quad \pi^T \log \bm{p} \quad + \quad c \|\theta\|^2
+	\]
+
+
+* ¿Cómo funciona Alpha Zero?                                        :B_frame:
+  :PROPERTIES:
+  :BEAMER_env: frame
+  :END:
+
+#+Beamer: \framesubtitle{Iteración de política}
+
+#+ATTR_LATEX: :float t
+#+ATTR_LaTeX: :width 0.70\textwidth
+[[./imagenes/metodo_general.png]]
+
+
+
+* /Montecarlo tree search/ (MCTS)                                   :B_frame:
+  :PROPERTIES:
+  :BEAMER_env: frame
+  :END:
+
+#+Beamer: \framesubtitle{Algoritmo general}
+
+- Se inicializa con un nodo \(s_0\) posición inicial
+- En cada arista \((s, a)\) se almacena:
+  - \(Q(s, a)\), una función de valor estado/acción
+  - \(W(s, a)\), un peso
+  - \(N(s, a)\), un contador de veces que se a pasado por el nodo
+  - \(P(s, a)\), la política /a priori/ (a partir de \(f_\theta(s)\))
+
+\vfill
+
+#+ATTR_LATEX: :float b
+#+ATTR_LaTeX: :height 0.30\textheight
+[[./imagenes/mcts.png]]
+
+
+* /Montecarlo tree search/ (MCTS)                                   :B_frame:
+  :PROPERTIES:
+  :BEAMER_env: frame
+  :END:
+
+#+Beamer: \framesubtitle{Selección}
+
+En cada nodo \(s_t\) se escoge la jugada tal que
+\[
+a_t = \arg\max_a (Q(s_t, a) + U(s_t, a)),
+\]
+\[
+U(s, a) = c_{puct} P(s, a) \frac{\sqrt{\sum_b N(s,b)}}{1 + N(s, a)}
+\]
+hasta encontrar un nodo sin expandir.\vfill
+
+
+#+ATTR_LATEX: :float b
+#+ATTR_LaTeX: :height 0.30\textheight
+[[./imagenes/mcts_s.png]]
+
+
+* /Montecarlo tree search/  (MCTS)                                  :B_frame:
+  :PROPERTIES:
+  :BEAMER_env: frame
+  :END:
+
+#+Beamer: \framesubtitle{Expansión}
+
+- Evaluar \((\bm{p}, v) = f_\theta(s_L)\)
+- Asignar a cada arista (jugada legal):
+  - \(N(s_L, a) = 0\),
+  - \(W(s_L, a) = 0\),
+  - \(Q(s_L, a) = 0\),
+  - \(P(s_L, a) = p_a\)
+
+\vfill
+
+#+ATTR_LATEX: :float b
+#+ATTR_LaTeX: :height 0.30\textheight
+[[./imagenes/mcts_e.png]]
+
+
+* /Montecarlo tree search/ (MCTS)                                   :B_frame:
+  :PROPERTIES:
+  :BEAMER_env: frame
+  :END:
+
+#+Beamer: \framesubtitle{Respaldo}
+
+- Para cada vértice en la trayectoria:
+  - \(N(s, a) = N(s, a) + 1\),
+  - \(W(s_L, a) = W(s, a) + v\),
+  - \(Q(s_L, a) = \frac{W(s, a)}{ N(s, a)}\)
+
+\vfill
+
+#+ATTR_LATEX: :float b
+#+ATTR_LaTeX: :height 0.30\textheight
+[[./imagenes/mcts_b.png]]
+
+
+* /Montecarlo tree search/ (MCTS)                                   :B_frame:
+  :PROPERTIES:
+  :BEAMER_env: frame
+  :END:
+
+#+Beamer: \framesubtitle{Jugar}
+
+- Política ávida:
+  \[a^* = \arg\max_a N(s_0, a)\]
+
+- Política de exploración:
+  \[\pi(a| s_0) = \frac{N(s_0, a)}{\sum_b N(s_0, b)}\]
+
+\vfill
+
+#+ATTR_LATEX: :float b
+#+ATTR_LaTeX: :height 0.30\textheight
+[[./imagenes/mcts_p.png]]
+
+
+* ¿Pero cuántos juegos realiza?                                     :B_frame:
+  :PROPERTIES:
+  :BEAMER_env: frame
+  :END:
+
+\vfill
+
+** En Alpha Zero se utilizó para todos los casos                    :B_block:
+   :PROPERTIES:
+   :BEAMER_env: block
+   :END:
+    - Por cada iteración: 25,000 juegos
+    - Para cada movimiento (de cada juego): 1600 simulaciones de MCTS
+    - Para los primeros 30 movimientos de cada juego se utiliza la política de exploración.
+
+\vfill
+
+
+* ¿Porqué funciona Alpha Zero?                                      :B_frame:
+  :PROPERTIES:
+  :BEAMER_env: frame
+  :END:
+
+
+#+ATTR_LATEX: :float b
+#+ATTR_LaTeX: :height 0.30\textheight
+[[./imagenes/cnn.png]]
+
+
+
+** La receta secreta :B_alertblock:
+   :PROPERTIES:
+   :BEAMER_env: alertblock
+   :END:
+
+   *$f_\theta(s)$ se modela con una red neuronal profunda*
+
+
+     - Redes neuronales convolucionales (CNN)
+     - Tensorflow
+     - /Tensor processing units/ TPUs
+
+
+
+
+* Aprendizaje profundo (DL)                                         :B_frame:
+  :PROPERTIES:
+  :BEAMER_env: frame
+  :END:
+#+Beamer: \framesubtitle{Motivación}
+
+#+ATTR_LATEX: :float t
+#+ATTR_LaTeX: :width 0.80\textwidth
+[[./imagenes/bb2001.png]]
+
+
+
+* Aprendizaje profundo (DL)                                         :B_frame:
+  :PROPERTIES:
+  :BEAMER_env: frame
+  :END:
+#+Beamer: \framesubtitle{Motivación}
+
+#+ATTR_LATEX: :float t
+#+ATTR_LaTeX: :width 0.80\textwidth
+[[./imagenes/dl_justif.png]]
+
+
+
+* Arquitecturas hacia adelante                                      :B_frame:
+  :PROPERTIES:
+  :BEAMER_env: frame
+  :END:
+#+Beamer: \framesubtitle{Unidad o \emph{Neurona}}
+
+#+ATTR_LATEX: :float t
+#+ATTR_LaTeX: :width 0.80\textwidth
+[[./imagenes/neurona.png]]
+
+
+
+* Arquitecturas hacia adelante                                      :B_frame:
+  :PROPERTIES:
+  :BEAMER_env: frame
+  :END:
+#+Beamer: \framesubtitle{Estructura general}
+
+#+ATTR_LATEX: :float t
+#+ATTR_LaTeX: :width 0.80\textwidth
+[[./imagenes/rn.png]]
+
+
+
+* Redes convolucionales (CNN)                                       :B_frame:
+  :PROPERTIES:
+  :BEAMER_env: frame
+  :END:
+#+Beamer: \framesubtitle{Información local}
+
+\vfill
+#+ATTR_LATEX: :float t
+#+ATTR_LaTeX: :width 0.90\textwidth
+[[./imagenes/convol.png]]\vfill
+
+
+
+
+* Redes convolucionales (CNN)                                       :B_frame:
+  :PROPERTIES:
+  :BEAMER_env: frame
+  :END:
+#+Beamer: \framesubtitle{Arquitectura general}
+
+\vfill
+#+ATTR_LATEX: :float t
+#+ATTR_LaTeX: :width 0.99\textwidth
+[[./imagenes/cnn_nature.jpg]]\vfill
+
+
+* Redes convolucionales (CNN)                                       :B_frame:
+  :PROPERTIES:
+  :BEAMER_env: frame
+  :END:
+#+Beamer: \framesubtitle{Desempeño en tratamiento de imágenes}
+
+Resultados aplicados al conjunto de datos /ImageNet/
+
+\vfill
+
+#+ATTR_LATEX: :float t
+#+ATTR_LaTeX: :width 0.90\textwidth
+[[./imagenes/cnn_evo.png]]\vfill
+
+
+
+
+* Redes convolucionales (CNN)                                       :B_frame:
+  :PROPERTIES:
+  :BEAMER_env: frame
+  :END:
+
+#+Beamer: \framesubtitle{Arquitectura de Alpha Zero}
+
+\vfill
+#+ATTR_LATEX: :float t
+#+ATTR_LaTeX: :width 0.80\textwidth
+[[./imagenes/az_arqui.png]]\vfill
+
+
+* Redes convolucionales (CNN)                                       :B_frame:
+  :PROPERTIES:
+  :BEAMER_env: frame
+  :END:
+
+#+Beamer: \framesubtitle{Representación}
+
+\vfill
+#+ATTR_LATEX: :float t
+#+ATTR_LaTeX: :width 0.90\textwidth
+[[./imagenes/tabla.png]]\vfill
+
+
+* Tensorflow                                                        :B_frame:
+  :PROPERTIES:
+  :BEAMER_env: frame
+  :END:
+
+#+Beamer: \framesubtitle{¿Qué es TensorFlow}
+
+#+ATTR_LATEX: :float t
+#+ATTR_LaTeX: :height 0.15\textheight
+[[./imagenes/tf_logo.png]]\vfill
+
+
+
+- Desarrollado por /Google/ para el proyecto /Google Brain/ \vfill
+- Biblioteca para cómputo numérico basado en graficas de flujo de datos \vfill
+- Los Vértices representan operaciones y las aristas tensores \vfill
+- Se adapta a diferentes plataformas \vfill
+
+
+
+* Tensorflow                                                        :B_frame:
+  :PROPERTIES:
+  :BEAMER_env: frame
+  :END:
+
+#+Beamer: \framesubtitle{Arquitectura}
+
+\vfill
+
+#+ATTR_LATEX: :float t
+#+ATTR_LaTeX: :height 0.50\textheight
+[[./imagenes/tf_layers.png]]\vfill
+
+
+* /Tensor Processing Unit/ (TPU)                                    :B_frame:
+  :PROPERTIES:
+  :BEAMER_env: frame
+  :END:
+
+
+Unidad de procesamiento específica para TensorFlow
+
+\vfill
+
+#+ATTR_LATEX: :float t
+#+ATTR_LaTeX: :height 0.50\textheight
+[[./imagenes/tpu.png]]\vfill
+
+
+* /Tensor Processing Unit/ (TPU)                                    :B_frame:
+  :PROPERTIES:
+  :BEAMER_env: frame
+  :END:
+
+\vfill
+- TPU primera generación (febrero 2016):
+  - Operaciones en 8 bits (enteros)
+  - Arreglos de multiplicadores de 256 \times 256
+  - Set de instrucciones con multiplicación matricial, convoluciones y ReLU \vfill
+
+- TPU segunda generación (mayo 2017):
+  - Mayor ancho de banda
+  - Operaciones en números flotantes
+  - Módulos de 4 circuitos (180 TFLOPS)
+  - 15 a 30 veces más rápidos que la primer generación \vfill
+
+
+
+* Costo energético                                                  :B_frame:
+  :PROPERTIES:
+  :BEAMER_env: frame
+  :END:
+
+\vfill
+
+#+ATTR_LATEX: :float t
+#+ATTR_LaTeX: :height 0.50\textheight
+[[./imagenes/energia.png]]\vfill
+
+
+
+* ¿Es Alpha Zero un hito en la IA?                                  :B_frame:
+  :PROPERTIES:
+  :BEAMER_env: frame
+  :END:
+
+/*"Los juegos es a la computación lo que la formula 1 al diseño automotriz"*/
+
+\vfill
+
+- Definitivamente es un logro excepcional
+
+- Sencillo y elegante
+
+- Para entornos con información perfecta (/i.e./ plegado de proteínas, reacciones químicas)
+
+- Combina técnicas muy atractivas
+
+\vfill
+
+
+- Cuidadosamente promocionado por Google
+
+- La comunidad de ajedrez cuestiona los resultados respecto a /Stockfish/
+
+- ¿Depende únicamente de la capacidad de computo de Google?
+
+
+* Regresando al XX aniversario de la LCC                            :B_frame:
+  :PROPERTIES:
+  :BEAMER_env: frame
+  :END:
+
+La computación actual requiere (requerirá):
+
+\vfill
+
+- Modelos teóricos de computación
+- Algoritmos y estructuras de datos eficientes
+- Trabajo en grupos interdisciplinarios
+- Álgebra lineal, optimización
+- Probabilidad, estadística
+- Inteligencia artificial
+
+\vfill
+
+* XX aniversario de la LCC                                          :B_frame:
+  :PROPERTIES:
+  :BEAMER_env: frame
+  :END:
+
+\vfill
+/*\huge{Muchas gracias por su atención}*/
+\vfill
