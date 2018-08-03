@@ -1,5 +1,5 @@
 #+STARTUP: beamer
-#+TITLE:     Preprocesamiento de la información
+#+TITLE:     Pre-procesamiento de texto
 #+AUTHOR:    \href{mailto:julio.waissman@unison.mx}{Julio Waissman}
 #+DATE:      9 de marzo de 2018
 #+BEAMER_HEADER: \subtitle{Curso de procesamiento de lenguaje natural}
@@ -12,142 +12,191 @@
 #+LANGUAGE:  es
 
 #+INCLUDE: "setup.org"
-* Algo acerca de mi                                                 :B_frame:
-  :PROPERTIES:
-  :BEAMER_env: frame
-  :END:
-+ Profesor-Investigador Universidad de Sonora \vfill
-+ Doctorado en /Sistemas Automáticos/ INPT \vfill
-+ Grupo de trabajo en Ciencia de Datos \vfill
-+ Algunos proyectos de investigación \vfill
-+ Algunos proyectos de vinculación \vfill
 
-* ¿Que es PLN?                                                      :B_frame:
+* Alguna definiciones                                               :B_frame:
   :PROPERTIES:
   :BEAMER_env: frame
   :END:
 
-+ *Segun /Wikipedia/*
-#+BEGIN_QUOTE
-Campo de las ciencias de la computación, inteligencia artificial y
-lingüística que estudia las interacciones entre las computadoras y el
-lenguaje humano.
-#+END_QUOTE
+- Un documento es una cadena de caracteres
+  + Un tweet
+  + Un libro
+  + Un correo electrónico\vfill
+- Un /corpus/ es una colección de documentos (por lo general congruentes entre si)
+- Los documentos pueden dividirse en párrafos, frases y/o palabras
+  + Pueden estas anotados
+  + Pueden estar asignados a una categoría\vfill
+- Un vocabulario es un conjunto cerrado de palabras de dimensión \(V\)
 
-+ *Segun /Copestake/*
-#+BEGIN_QUOTE
-Procesamiento automático (o semi-automático) del lenguaje humano
-#+END_QUOTE
-
-+ La mayoría de los autores de libros de texto (y cursos)
-  más que definirlo lo contextualizan. \vfill
-
-+ Tambien se conoce como /Lingüística computacional/.
-
-* Temas de PLN                                                      :B_frame:
+* Procesamiento básico de la información                            :B_frame:
   :PROPERTIES:
   :BEAMER_env: frame
   :END:
 
-  #+ATTR_LATEX: :float t
-  #+ATTR_LaTeX: :width \textwidth
-  [[./imagenes/nlp_temas.png]]
+1. Normalmente la información en forma de texto en lenguaje natural
+   viene en formatos complicados y trae muchos /artefactos/ que
+   influyen de manera muy importante en el resultado de una tarea de PLN. \vfill
+2. Se requiere manejo de información en formatos =json= o =xml=, así
+   como el manejo de bases de datos. \vfill
+3. El acondicionamiento del texto es fundamental (capitalización,
+   minúsculas, corrección, eliminación de argot ... \vfill
+
+* Expresiones regulares                                             :B_frame:
+  :PROPERTIES:
+  :BEAMER_env: frame
+  :END:
+
+1. Las expresiones regulares (/regex/) juegan un rol /sorprendentemente/ importante en PLN
+2. El primer paso en una tarea de PLN seguido implica el uso de /regex/ sofisticadas
+3. Son difíciles de corregir
+4. Si quieres practicar, puedes consultar [[https://www.datacamp.com/community/tutorials/python-regular-expression-tutorial?utm_source=adwords_ppc&utm_campaignid=1455363063&utm_adgroupid=65083631748&utm_device=c&utm_keyword=&utm_matchtype=b&utm_network=g&utm_adpostion=1t1&utm_creative=278443377092&utm_targetid=aud-390929969673:dsa-473406579035&utm_loc_interest_ms=&utm_loc_physical_ms=1010043&gclid=CjwKCAjw14rbBRB3EiwAKeoG_0SPfQcti4l3OBd-wnJ3b8Y9Mj3I1KOR5X8QJbMNYvWJvkh0AxLiqhoCmmYQAvD_BwE][este tutorial de /regex/ en /python/]] \vfill
+
+* Algunas expresiones regulares                                     :B_frame:
+  :PROPERTIES:
+  :BEAMER_env: frame
+  :END:
+
 #+BEGIN_CENTER
-#+BEGIN_LATEX
-\tiny{Fuente https://ontotext.com/top-5-semantic-technology-trends-2017/}
-#+END_LATEX
+\small{Diyunciones}
+#+END_CENTER
+  #+ATTR_LATEX: :float t
+  #+ATTR_LaTeX: :width .65\textwidth
+  [[./imagenes/regex_1.png]]
+
+#+BEGIN_CENTER
+\small{Rangos}
+#+END_CENTER
+  #+ATTR_LATEX: :float t
+  #+ATTR_LaTeX: :width .75\textwidth
+  [[./imagenes/regex_2.png]]
+
+* Algunas expresiones regulares                                     :B_frame:
+  :PROPERTIES:
+  :BEAMER_env: frame
+  :END:
+
+#+BEGIN_CENTER
+\small{Negaciones}
+#+END_CENTER
+  #+ATTR_LATEX: :float t
+  #+ATTR_LaTeX: :width .75\textwidth
+  [[./imagenes/regex_3.png]]
+
+#+BEGIN_CENTER
+\small{disyunción con |}
+#+END_CENTER
+  #+ATTR_LATEX: :float t
+  #+ATTR_LaTeX: :width .50\textwidth
+  [[./imagenes/regex_5.png]]
+
+* Algunas expresiones regulares                                     :B_frame:
+  :PROPERTIES:
+  :BEAMER_env: frame
+  :END:
+
+#+BEGIN_CENTER
+\small{* + ? .}
+#+END_CENTER
+  #+ATTR_LATEX: :float t
+  #+ATTR_LaTeX: :width .55\textwidth
+  [[./imagenes/regex_4.png]]
+
+#+BEGIN_CENTER
+\small{Inicio y fin de cadena}
+#+END_CENTER
+  #+ATTR_LATEX: :float t
+  #+ATTR_LaTeX: :width .50\textwidth
+  [[./imagenes/regex_6.png]]
+
+* Vamos a la libreta                                                :B_frame:
+  :PROPERTIES:
+  :BEAMER_env: frame
+  :END:
+  #+ATTR_LATEX: :float t
+  #+ATTR_LaTeX: :width .35\textwidth
+  [[./imagenes/jupyter.png]]
+#+BEGIN_CENTER
+Veamos unos ejemplo no tan triviales
 #+END_CENTER
 
-* ¿Porqué estudiar PLN?                                             :B_frame:
+
+* ¿Que es una palabra?                                              :B_frame:
   :PROPERTIES:
   :BEAMER_env: frame
   :END:
+- Una secuencia de caracteres con significado \vfill
+- En español, la puntuación y los caracteres sirven para separar palabras. \vfill
+- ¿Y los neologismos, los /hashtags/, las direcciones url, las fechas,...? \vfill
+- ¿La puntuación debe de integrarse en la palabra?
 
+* Token y tokenización                                              :B_frame:
+  :PROPERTIES:
+  :BEAMER_env: frame
+  :END:
+** Token                                                            :B_block:
+   :PROPERTIES:
+   :BEAMER_env: block
+   :END:
+   Unidad útil de caracteres para el procesamiento semántico. Puede
+   ser palabras, frases, simbolos, etc. \vfill
+
+** Tokenización                                                     :B_block:
+   :PROPERTIES:
+   :BEAMER_env: block
+   :END:
+   Proceso de separar un documento en tokens.
+
+1. El método más popular en inglés es el [[ftp://ftp.cis.upenn.edu/pub/treebank/public_html/tokenization.html][Treebank tokenization]]
+
+2. En español el proceso de tokenización es relativamente simple, si
+   no se trata con documentos especializados
+
+3. En idiomas como aleman, turco, japones o chino, la tokenización es un problema difícil \vfill
+
+* Veamos unos ejemplos
+  :PROPERTIES:
+  :BEAMER_env: frame
+  :END:
   #+ATTR_LATEX: :float t
-  #+ATTR_LaTeX: :width .8\textwidth
-  [[./imagenes/NLP-17-chart.jpg]]
+  #+ATTR_LaTeX: :width .35\textwidth
+  [[./imagenes/jupyter.png]]
 #+BEGIN_CENTER
-#+BEGIN_LATEX
-\tiny{Fuente https://www.tractica.com/newsroom/press-releases/natural-language-processing-market-to-reach-22-3-billion-by-2025/}
-#+END_LATEX
-
+Regresamos a la libreta
 #+END_CENTER
 
+* Normalización de /tokens/                                         :B_frame:
+  :PROPERTIES:
+  :BEAMER_env: frame
+  :END:
+- Algunos métodos basados en reglas para normalizar tokens con mismo significado
+  + Minúsculas en todas las palabras
+  + Manejo de acrónimos (EUA, E.U.A., US, U.S., USA, U.S.A.)
+  + Requiere de desarrollar muchas reglas particulares \vfill
 
-* ¿Porqué estudiar PLN?                                             :B_frame:
+- Encontrar el mismo token para diferentes formas con el mismo
+  significado semántico (niños, niño, niña, niñas, ...)
+  + Basado en análisis morfológico (lematización)
+  + Basado en reglas heurísticas (/stemming/) \vfill
+
+* Lematización                                                      :B_frame:
   :PROPERTIES:
   :BEAMER_env: frame
   :END:
 
-  #+ATTR_LATEX: :float t
-  #+ATTR_LaTeX: :width .8\textwidth
-  [[./imagenes/mercado_latin.png]]
-#+BEGIN_CENTER
-#+BEGIN_LATEX
-\tiny{Fuente: https://www.statista.com/statistics/607931/latin-america-natural-language-processing-market-revenues/}
-#+END_LATEX
+- Se refiere al uso de un análisis lingüístico formal basado en un
+  vocabulario cerrado y en reglas morfológicas.\vfill
+- Difícil de hacer, requiere de mucho esfuerzo. \vfill
+- Convierte el token a la forma base de la palabra, tal y como esté
+  definido en un diccionario de referencia (lexema).\vfill
+- Existen pocos lematizadores en español ([[http://nlp.lsi.upc.edu/freeling/index.php/node/1][freeling]], spacy).
 
-#+END_CENTER
-
-
-* Formas de hacer PLN                                               :B_frame:
+* Stemming                                                          :B_frame:
   :PROPERTIES:
   :BEAMER_env: frame
   :END:
-
-+ Basado en reglas
-  - Expresiones regulares
-  - Gramáticas libres de contexto \vfill
-
-+ Probabilista
-  - Modelos de $n$-gramas
-  - Clasificadores lineales
-  - Métodos basados en maximización de la verosimilitud \vfill
-
-+ Aprendizaje profundo
-  - Redes convolucionales
-  - Redes recurrentes \vfill
-
-
-
-* ¿Que esperar de este curso?                                       :B_frame:
-  :PROPERTIES:
-  :BEAMER_env: frame
-  :END:
-
-1. Una noción general del PLN \vfill
-
-2. Una idea general de las técnicas y herramientas más populares para
-   las tareas de PLN seleccionadas en el curso. \vfill
-
-3. Conocimiento superficial de /como/ funcionan algunos de los modelos
-   más importantes (o más populares) de PLN \vfill
-
-4. Conocer y saber aplicar las herramientas existentes en /python/
-   para casos de estudio \vfill
-
-
-* Temas del curso                                                   :B_frame:
-  :PROPERTIES:
-  :BEAMER_env: frame
-  :END:
-
-1. Normalización de la información \vfill
-
-2. Clasificación de documentos \vfill
-
-3. Modelos probabilistas secuenciales \vfill
-
-4. Modelos de semántica distribuida \vfill
-
-5. Modelado de tópicos \vfill
-
-* Planeación                                                        :B_frame:
-  :PROPERTIES:
-  :BEAMER_env: frame
-  :END:
-
-+ Explicación general de los temas \vfill
-+ Ejemplos de aplicación y/o modelado al final de cada explicación \vfill
-+ Trabajos prácticos para reforzar cada uno de los temas principales \vfill
-+ Un proyecto final que permita enfrentarse a la busqueda y/o generación de datos \vfill
+- Proceso de remover y remplazar sufijos de una palabra en varios
+  pasos a fin de obtener la /raiz/ de la palabra (llamada tallo, o /stem/) \vfill
+- Método heurístico para ir recortando las palabras \vfill
+- Típicamente falla en formas irregulares \vfill
+- El método más típico para inglés es el [[http://snowball.tartarus.org/algorithms/porter/stemmer.html][Porter's stemming algorithm]] \vfill
+- El método más típico en español es el [[http://snowball.tartarus.org/algorithms/spanish/stemmer.html][Snowball spanish stemming algorithm]]

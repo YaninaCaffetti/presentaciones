@@ -1,0 +1,26 @@
+#+STARTUP: beamer
+#+TITLE:     Clasificación de documentos
+#+AUTHOR:    \href{mailto:julio.waissman@unison.mx}{Julio Waissman}
+#+DATE:      9 de marzo de 2018
+#+BEAMER_HEADER: \subtitle{Curso de procesamiento de lenguaje natural}
+#+BEAMER_HEADER: \institute[UNaM/MTI]{Maestría en Tecnologías de la Información\\Universidad Nacional de Misiones}
+# #+BEAMER_HEADER: \titlegraphic{\includegraphics[height=1.5cm]{~/.emacs.d/julio/org/letragrama.png}}
+#+BEAMER_HEADER: \titlegraphic{\includegraphics[width=0.8\textwidth]{imagenes/cabecera.png}}
+
+
+#+DESCRIPTION: PLN para la MTI de la UNaM
+#+LANGUAGE:  es
+
+#+INCLUDE: "setup.org"
+* ¿Que vamos a ver?
+* Extracción de características
+* El método de la bolsa de palabras
+* Manteniendo algo del orden de las palabras
+* Explosión de características
+* TF-IDF
+* Revisemos el ejemplo
+* Clasificación de documentos
+* Regresión logística
+* Ventajas de la regresión logística
+* Completemos el ejemplo
+* ¿Que hacer para mejorar?
