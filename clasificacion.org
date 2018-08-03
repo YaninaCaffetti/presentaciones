@@ -12,15 +12,178 @@
 #+LANGUAGE:  es
 
 #+INCLUDE: "setup.org"
-* ¿Que vamos a ver?
-* Extracción de características
-* El método de la bolsa de palabras
-* Manteniendo algo del orden de las palabras
-* Explosión de características
-* TF-IDF
+
+* Problema de clasificación de documentos                           :B_frame:
+  :PROPERTIES:
+  :BEAMER_env: frame
+  :END:
+
+- Una de las tareas más utilizadas de PLN
+  + Análisis de polaridad
+  + Determinación de tópicos
+  + Detección de /spam/
+  + Detección de autores
+  + Identificación de idioma \vfill
+
+- Se utilizan métodos de clasificación bien conocidos \vfill
+
+- Transformación de la información:
+\[\text{documento} \to (x_1, x_2, \ldots, x_{nd}) \to \mathbb{R}^M\]
+donde \(M\) es el número de características que se extraen del documento \vfill
+
+* El método de la bolsa de palabras                                 :B_frame:
+  :PROPERTIES:
+  :BEAMER_env: frame
+  :END:
+
+  #+ATTR_LATEX: :float t
+  #+ATTR_LaTeX: :width .75\textwidth
+  [[./imagenes/bow.jpg]]
+
+* Manteniendo algo del orden de las palabras                        :B_frame:
+  :PROPERTIES:
+  :BEAMER_env: frame
+  :END:
+
+#+BEGIN_CENTER
+Se pueden agregar pares de tokens, tripletas, ...
+#+END_CENTER
+
+  #+ATTR_LATEX: :float t
+  #+ATTR_LaTeX: :width .75\textwidth
+  [[./imagenes/ngramas.png]]
+
+#+BEGIN_CENTER
+*Explosión de la dimensión de las características*
+#+END_CENTER
+
+* Explosión de características                                      :B_frame:
+  :PROPERTIES:
+  :BEAMER_env: frame
+  :END:
+
+- Si las características son muchas, entonces se pueden eliminar las
+  que son muy frecuentes \vfill
+- Tambien se pueden eliminar las que aparecen muy poco \vfill
+- Si las características que quedan son las de mediana frecuencia,
+  mientras más aparezca el token en el documento más importancia tiene para éste
+  (/frecuencia del término en el documento/) \vfill
+- Pero mientras la palabra aparezca en más documentos diferentes
+  (/frecuencia de documentos con el término/), menos representativo es
+  el token respecto a un caso específico.
+
+* TF-IDF                                                            :B_frame:
+  :PROPERTIES:
+  :BEAMER_env: frame
+  :END:
+
+** \small{TF (Term frequency)}                                      :B_block:
+   :PROPERTIES:
+   :BEAMER_env: block
+   :END:
+   \[tf(t,d) = n_{t,d}\] donde \(n_{t,d}\) es la frecuencia que
+   aparece el término \(t\) en el documento \(d\)
+
+** \small{IDF (Inverse Document frequency)}                         :B_block:
+   :PROPERTIES:
+   :BEAMER_env: block
+   :END:
+   \[idf(t, D) = \log\left(\frac{1 + n_D}{1 + df(D, t)}\right) + 1\] donde
+   \(n_D\) es el número de documentos y \(df(D, t)\) es el número de
+   documentos en los que aparece \(t\)
+
+** \small{TF-IDF}                                                   :B_block:
+   :PROPERTIES:
+   :BEAMER_env: block
+   :END:
+   \[tfidf(t, d, D) = tf(t, d) \cdot idf(t, D)\]
+   y se normalizan los valores para todos los documentos
+
 * Revisemos el ejemplo
-* Clasificación de documentos
-* Regresión logística
-* Ventajas de la regresión logística
-* Completemos el ejemplo
-* ¿Que hacer para mejorar?
+  :PROPERTIES:
+  :BEAMER_env: frame
+  :END:
+  #+ATTR_LATEX: :float t
+  #+ATTR_LaTeX: :width .35\textwidth
+  [[./imagenes/jupyter.png]]
+#+BEGIN_CENTER
+Vamos a realizar la primera parte de la libreta
+#+END_CENTER
+
+* Clasificación de documentos                                       :B_frame:
+  :PROPERTIES:
+  :BEAMER_env: frame
+  :END:
+- Se tiene una serie de documentos conocidos asignados a una categoría
+  \[\{(d^1,y^1), (d^2, y^2), \ldost, (d^D, y^D)\}, \quad y \in \{C_1,
+  \ldots, C_K\} = Y\]
+
+- Cada documento se puede representar como un vector de
+  características \[\phi(d^i) = x^i = (x^i_1, x^i_2, \ldots, x^i_M),
+  \quad x \in X\] donde \(\phi(\cdot)\) puede ser BOW, TF-IDF, ...
+
+** Objetivo de la clasificacion de documentos                       :B_block:
+   :PROPERTIES:
+   :BEAMER_env: block
+   :END:
+   Obtener una función $h: X \to Y$ parametrizada por \(w = (w_0, \ldots w_P)\) tal que
+   \[\hat{y} = h(x; w)\] de forma que \(\hat{y}\) sea *lo más plausible posible*
+
+* Regresión logística                                               :B_frame:
+  :PROPERTIES:
+  :BEAMER_env: frame
+  :END:
+- Se basa en encontrar la probabilidad de una categoría, conociendo el
+  texto, asumiendo una distribución de Beroulli
+  \[\Pr(y=C_k | x; w) = \sigma(x^Tw) = \frac{1}{1 + \exp(-x^Tw)}\]
+
+- Si solo hay dos categorías (\(C = \{C_0, C_1\}\)) se selecciona la categoría con más probabilidad
+  \[\hat{y} = h(x; w) = C_1\ \text{si}\ \sigma(x^Tw) \ge 0.5\ \text{si no}\ C_0\]
+
+- Si hay más de dos categorías se utiliza la estratégia /One vs Rest/ donde se estima
+  un vector de parámetros $w^k$ por cada categoría $C_k$ (¿Qué significa esto?). Se selecciona la
+  categoría con mayor probabilidad
+  \[\hat{y} = h(x; w^1, \ldots, w^K) = C_{k^*}\ \text{donde}\ k^* = \arg\max_{k \in \{1, \ldots, K\}} \sigma(x^Tw^k)\]
+
+* Más sobre la regresión logística                                  :B_frame:
+  :PROPERTIES:
+  :BEAMER_env: frame
+  :END:
+
+  #+ATTR_LATEX: :float t
+  #+ATTR_LaTeX: :width .45\textwidth
+  [[./imagenes/logistica_curva.png]]
+
+
+El criterio de /optimización/ es la *máxima verosimilitud con
+regularización* (¿Qué es esto?). Los vectores \(w^1, \ldots, w^K\) los vamos a encontrar
+/minimizando/ la función
+
+\[ \frac{1}{D}\sum_{i = 1}^D \sum_{k=1}^K 1\{y^i = C_k\}\log\left(\sigma(x^Tw^k)\right) +
+\frac{C}{K}\sum_{k=1}^K \|w^k\| \]
+
+* Completemos el ejemplo                                            :B_frame:
+  :PROPERTIES:
+  :BEAMER_env: frame
+  :END:
+
+  #+ATTR_LATEX: :float t
+  #+ATTR_LaTeX: :width .35\textwidth
+  [[./imagenes/jupyter.png]]
+#+BEGIN_CENTER
+Vamos a hacer clasificación de sentimientos y de tópicos con regresión lineal
+#+END_CENTER
+
+* ¿Que hacer para mejorar?                                          :B_frame:
+  :PROPERTIES:
+  :BEAMER_env: frame
+  :END:
+
+- Modificar la normalización de texto basada en conocimiento experto \vfill
+- Agregar y/o cambiar la forma de lematizar o hacer el /stemming/ \vfill
+- Probar con otros métodos de clasificación (i.e. SVM) \vfill
+- Cambia el método por aprendizaje profundo (o métodos similares, como /FastText/ \vfill
+
+  #+ATTR_LATEX: :float t
+  #+ATTR_LaTeX: :width .35\textwidth
+  [[./imagenes/fin.jpg]]

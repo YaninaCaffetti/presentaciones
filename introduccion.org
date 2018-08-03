@@ -73,7 +73,6 @@ Procesamiento automático (o semi-automático) del lenguaje humano
 
 #+END_CENTER
 
-
 * ¿Porqué estudiar PLN?                                             :B_frame:
   :PROPERTIES:
   :BEAMER_env: frame
@@ -88,7 +87,6 @@ Procesamiento automático (o semi-automático) del lenguaje humano
 #+END_LATEX
 
 #+END_CENTER
-
 
 * Formas de hacer PLN                                               :B_frame:
   :PROPERTIES:
@@ -109,7 +107,6 @@ Procesamiento automático (o semi-automático) del lenguaje humano
   - Redes recurrentes \vfill
 
 
-
 * ¿Que esperar de este curso?                                       :B_frame:
   :PROPERTIES:
   :BEAMER_env: frame
@@ -125,7 +122,6 @@ Procesamiento automático (o semi-automático) del lenguaje humano
 
 4. Conocer y saber aplicar las herramientas existentes en /python/
    para casos de estudio \vfill
-
 
 * Temas del curso                                                   :B_frame:
   :PROPERTIES:
@@ -151,3 +147,7 @@ Procesamiento automático (o semi-automático) del lenguaje humano
 + Ejemplos de aplicación y/o modelado al final de cada explicación \vfill
 + Trabajos prácticos para reforzar cada uno de los temas principales \vfill
 + Un proyecto final que permita enfrentarse a la busqueda y/o generación de datos \vfill
+
+  #+ATTR_LATEX: :float t
+  #+ATTR_LaTeX: :width .35\textwidth
+  [[./imagenes/fin.jpg]]

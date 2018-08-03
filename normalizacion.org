@@ -22,7 +22,7 @@
   + Un tweet
   + Un libro
   + Un correo electrónico\vfill
-- Un /corpus/ es una colección de documentos (por lo general congruentes entre si)
+- Un /corpus/ es una colección de documentos (congruentes entre si) \vfill
 - Los documentos pueden dividirse en párrafos, frases y/o palabras
   + Pueden estas anotados
   + Pueden estar asignados a una categoría\vfill
@@ -46,9 +46,9 @@
   :BEAMER_env: frame
   :END:
 
-1. Las expresiones regulares (/regex/) juegan un rol /sorprendentemente/ importante en PLN
-2. El primer paso en una tarea de PLN seguido implica el uso de /regex/ sofisticadas
-3. Son difíciles de corregir
+1. Las expresiones regulares (/regex/) juegan un rol /sorprendentemente/ importante en PLN \vfill
+2. El primer paso en una tarea de PLN seguido implica el uso de /regex/ sofisticadas \vfill
+3. Son difíciles de corregir \vfill
 4. Si quieres practicar, puedes consultar [[https://www.datacamp.com/community/tutorials/python-regular-expression-tutorial?utm_source=adwords_ppc&utm_campaignid=1455363063&utm_adgroupid=65083631748&utm_device=c&utm_keyword=&utm_matchtype=b&utm_network=g&utm_adpostion=1t1&utm_creative=278443377092&utm_targetid=aud-390929969673:dsa-473406579035&utm_loc_interest_ms=&utm_loc_physical_ms=1010043&gclid=CjwKCAjw14rbBRB3EiwAKeoG_0SPfQcti4l3OBd-wnJ3b8Y9Mj3I1KOR5X8QJbMNYvWJvkh0AxLiqhoCmmYQAvD_BwE][este tutorial de /regex/ en /python/]] \vfill
 
 * Algunas expresiones regulares                                     :B_frame:
@@ -57,7 +57,7 @@
   :END:
 
 #+BEGIN_CENTER
-\small{Diyunciones}
+\small{Disyunciones}
 #+END_CENTER
   #+ATTR_LATEX: :float t
   #+ATTR_LaTeX: :width .65\textwidth
@@ -83,7 +83,7 @@
   [[./imagenes/regex_3.png]]
 
 #+BEGIN_CENTER
-\small{disyunción con |}
+\small{Disyunciones con |}
 #+END_CENTER
   #+ATTR_LATEX: :float t
   #+ATTR_LaTeX: :width .50\textwidth
@@ -119,7 +119,6 @@
 Veamos unos ejemplo no tan triviales
 #+END_CENTER
 
-
 * ¿Que es una palabra?                                              :B_frame:
   :PROPERTIES:
   :BEAMER_env: frame
@@ -127,7 +126,11 @@ Veamos unos ejemplo no tan triviales
 - Una secuencia de caracteres con significado \vfill
 - En español, la puntuación y los caracteres sirven para separar palabras. \vfill
 - ¿Y los neologismos, los /hashtags/, las direcciones url, las fechas,...? \vfill
-- ¿La puntuación debe de integrarse en la palabra?
+- ¿La puntuación debe de integrarse en la palabra? \vfill
+
+  #+ATTR_LATEX: :float t
+  #+ATTR_LaTeX: :width .90\textwidth
+  [[./imagenes/tok_jap.png]]
 
 * Token y tokenización                                              :B_frame:
   :PROPERTIES:
@@ -178,6 +181,17 @@ Regresamos a la libreta
   + Basado en análisis morfológico (lematización)
   + Basado en reglas heurísticas (/stemming/) \vfill
 
+* Stemming                                                          :B_frame:
+  :PROPERTIES:
+  :BEAMER_env: frame
+  :END:
+- Proceso de remover y remplazar sufijos de una palabra en varios
+  pasos a fin de obtener la /raiz/ de la palabra (llamada tallo, o /stem/) \vfill
+- Método heurístico para ir recortando las palabras \vfill
+- Típicamente falla en formas irregulares \vfill
+- El método más típico para inglés es el [[http://snowball.tartarus.org/algorithms/porter/stemmer.html][Porter's stemming algorithm]] \vfill
+- El método más típico en español es el [[http://snowball.tartarus.org/algorithms/spanish/stemmer.html][Snowball spanish stemming algorithm]]
+
 * Lematización                                                      :B_frame:
   :PROPERTIES:
   :BEAMER_env: frame
@@ -190,13 +204,6 @@ Regresamos a la libreta
   definido en un diccionario de referencia (lexema).\vfill
 - Existen pocos lematizadores en español ([[http://nlp.lsi.upc.edu/freeling/index.php/node/1][freeling]], spacy).
 
-* Stemming                                                          :B_frame:
-  :PROPERTIES:
-  :BEAMER_env: frame
-  :END:
-- Proceso de remover y remplazar sufijos de una palabra en varios
-  pasos a fin de obtener la /raiz/ de la palabra (llamada tallo, o /stem/) \vfill
-- Método heurístico para ir recortando las palabras \vfill
-- Típicamente falla en formas irregulares \vfill
-- El método más típico para inglés es el [[http://snowball.tartarus.org/algorithms/porter/stemmer.html][Porter's stemming algorithm]] \vfill
-- El método más típico en español es el [[http://snowball.tartarus.org/algorithms/spanish/stemmer.html][Snowball spanish stemming algorithm]]
+  #+ATTR_LATEX: :float t
+  #+ATTR_LaTeX: :width .35\textwidth
+  [[./imagenes/fin.jpg]]
