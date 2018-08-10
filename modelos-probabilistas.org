@@ -1,0 +1,373 @@
+#+STARTUP: beamer
+#+TITLE:     Modelos probabilistas de lenguaje
+#+AUTHOR:    \href{mailto:julio.waissman@unison.mx}{Julio Waissman}
+#+DATE:      9 de marzo de 2018
+#+BEAMER_HEADER: \subtitle{Curso de procesamiento de lenguaje natural}
+#+BEAMER_HEADER: \institute[MTI-UNaM/UNEE]{Maestría en Tecnologías de la Información\\UNaM/UNEE}
+# #+BEAMER_HEADER: \titlegraphic{\includegraphics[height=1.5cm]{~/.emacs.d/julio/org/letragrama.png}}
+#+BEAMER_HEADER: \titlegraphic{\includegraphics[width=0.8\textwidth]{imagenes/cabecera.png}}
+
+
+#+DESCRIPTION: PLN para la MTI de la UNaM
+#+LANGUAGE:  es
+
+#+INCLUDE: "setup.org"
+
+
+* Modelo secuencial probabilista                                    :B_frame:
+  :PROPERTIES:
+  :BEAMER_env: frame
+  :END:
+
+1. Sea una secuencia de palabras (tokens)
+   \[w = (w_1, w_2, \ldots, w_k)\] \vfill
+
+2. Se quiere modelar la probabilidad de la secuencia de palabras
+   \[\Pr(w) = \Pr(w_1, w_2, \ldots, w_k)\] \vfill
+
+3. Si utilizamos la /regla de la cadena/ (teorema)
+   \[\Pr(w) = \Pr(w_1)\Pr(w_2|w_1) \cdots \Pr(w_k|w_1, w_2, \ldots, w_{k-1})\] \vfill
+
+4. Y aplicamos la /hipótesis de Markov/ (heurística)
+   \[Pr(w_i|w_1, \ldots, w_{i-1}) = \Pr(w_i|w_{i-n+1}, \ldots, w_{i-1})\] \vfill
+
+* Modelo de lenguaje por bigramas                                   :B_frame:
+  :PROPERTIES:
+  :BEAMER_env: frame
+  :END:
+
+- Si asumimos que \(n = 2\), entonces
+  \[\Pr(w) = \Pr(w_1)\Pr(w_2|w_1)\Pr(w_3|w_2)\cdots\Pr(w_k|w_{k-1})\]\vfill
+
+- En forma general:
+  \[\Pr(w) = \prod_{i=1}^{k+1} \Pr(w_i|w_{i-1})\] \vfill
+
+- Por ejemplo:\(Pr(\text{la}, \text{cumbiera}, \text{intelectual}) = \)
+  \[\Pr(\text{la})\Pr(\text{cumbiera} | \text{la})\Pr(\text{cumbiera}|\text{intelectual})\]\vfill
+
+- *Problemas con los inicios y los finales de una frase:*
+  \footnotesize\[Pr(\text{<s>}, \text{la}, \text{cumbiera}, \text{intelectual}, \text{</s>}) =\]
+  \[\Pr(\text{<s>})\Pr(\text{la}|\text{<s>})\Pr(\text{cumbiera} | \text{la})
+  \Pr(\text{cumbiera}|\text{intelectual})\Pr(\text{intelectual}|\text{</s>})\]\vfill
+
+* Modelo de lenguaje por n-gramas                                   :B_frame:
+  :PROPERTIES:
+  :BEAMER_env: frame
+  :END:
+
+
+** Modelo de lenguaje por \(n\)-gramas                              :B_block:
+   :PROPERTIES:
+   :BEAMER_env: block
+   :END:
+#   \big
+   \[\Pr(w) = \prod_{i=1}^{k+1} \Pr(w_i|w_{i-n+1}, \ldots w_{i-1})\] \vfill
+
+** consideraciones                                          :B_ignoreheading:
+   :PROPERTIES:
+   :BEAMER_env: ignoreheading
+   :END:
+Donde los parámetros de la distribución se obtienen maximizando la *verosimilitud logarítmica*:
+
+\[\log\Pr(w_{train}) = \sum_{i=1}^{N+1} \log\Pr(w_i|w_{i-n+1}, \ldots, w_{i-1})\]
+
+* ¿Que podemos hacer con un modelo probabilista secuencial?         :B_frame:
+  :PROPERTIES:
+  :BEAMER_env: frame
+  :END:
+
+
+
+
+1. Estimar la cadena más plausible
+   \[w^* = \arg \max \Pr(w_i, \ldots, \w_k|w_1, \ldots, w_{i-1}) \] \vfill
+
+2. Calcular la probabilidad de una frase dada en dicho lenguaje
+   \[Pr(w_1, w_2, \ldots, w_k)\] \vfill
+
+3. Estimar la probabilidad de una palabra dado un contexto
+   \[Pr(w_i|w_{i-r}, \ldots, w_{i-1}, w_{i+1},\ldots, w_{i + n})\] \vfill
+
+4. Recomendaciones en servicios de mensajería, correctores de
+   ortografía, reconocimiento de voz, teclado telefono, etc.
+
+* Como obtener el modelo                                            :B_frame:
+  :PROPERTIES:
+  :BEAMER_env: frame
+  :END:
+#+BEGIN_CENTER
+\Large \bf Todo se trata de contar
+#+END_CENTER
+
++ Sea \(c(w_a, w_b, w_c)\) el número de veces que aparece
+   el trigrama \(w_a, w_b, w_c\) en el corpus de entrenamiento. \vfill
+
++ El corpus de entrenamiento puede a su vez estar dividido en documentos (frases). \vfill
+
++ La funcion de cuenta se puede extenter a cualquier \(n\)-grama
+   como \(c(w_{a_1}, \ldot, w_{a_n})\). \vfill
+
+* Como obtener el modelo                                            :B_frame:
+  :PROPERTIES:
+  :BEAMER_env: frame
+  :END:
+#+BEGIN_CENTER
+\Large \bf Todo se trata de contar
+#+END_CENTER
+
+
++ La probabilidad se calcula como
+  \[\Pr(w_c | w_a, w_b) = \frac{c(w_a, w_b, w_c)}{c(w_a, w_b)}\]
+
++ Obtener los valores de \(\Pr(w_c|w_a, w_b)\) para todos los
+  trigramas \((w_a, w_b, w_c)\) que se pueden encontrar a partir de
+  las palabras de nuestro diccionario, es lo que se conoce como
+  *Modelo de lenguaje por trigramas* o modelo de trigramas.
+
++ Generalizable fácilmente a bigramas, cuatrigramas, etc...
+
+* Un ejemplo                                                        :B_frame:
+  :PROPERTIES:
+  :BEAMER_env: frame
+  :END:
+
+** columnas                                                       :B_columns:
+   :PROPERTIES:
+   :BEAMER_env: columns
+   :END:
+
+*** col                                                      :B_column:BMCOL:
+   :PROPERTIES:
+   :BEAMER_env: column
+   :BEAMER_col: 0.5
+   :END:
+#+BEGIN_EXAMPLE
+Dos cuerpos frente a frente
+son a veces dos olas
+y la noche es océano.
+
+Dos cuerpos frente a frente
+son a veces dos piedras
+y la noche desierto.
+
+Dos cuerpos frente a frente
+son a veces raíces
+en la noche enlazadas.
+#+END_EXAMPLE
+
+*** col2                                                              :BMCOL:
+    :PROPERTIES:
+    :BEAMER_col: 0.5
+    :END:
+#+BEGIN_EXAMPLE
+
+
+Dos cuerpos frente a frente
+son a veces navajas
+y la noche relámpago.
+
+Dos cuerpos frente a frente
+son dos astros que caen
+en un cielo vacío.
+
+
+
+
+#+END_EXAMPLE
+
+* Otro ejemplo                                                      :B_frame:
+  :PROPERTIES:
+  :BEAMER_env: frame
+  :END:
+
+  #+ATTR_LATEX: :float t
+  #+ATTR_LaTeX: :width .35\textwidth
+  [[./imagenes/jupyter.png]]
+
+* ¿Como medir la calidad del modelo?                                :B_frame:
+  :PROPERTIES:
+  :BEAMER_env: frame
+  :END:
+
+
++ Sea \(w_{test} = (w_1, \ldots, w_N)\) un /corpus de prueba/.\vfill
+
++ La *verosimilitud* del modelo respecto al corpus de prueba esta dada por
+\[\mathcal{L} = \Pr(w_{test}) = \prod_{i=1}^{k+1} \Pr(w_i|w_{i-n+1}, \ldots w_{i-1})\] \vfill
+
++ La *perplejidad* del modelo respecto al corpus de prueba esta dada por
+\[\mathcal{P} = \frac{1}{\Pr(w_{test})^{\frac{1}{N}}}} \vfill
+
+#+BEGIN_CENTER
+Mientras menor sea la perplejidad, mejor es el modelo
+#+END_CENTER
+
+* Problemas con la estimación de estos modelos                      :B_frame:
+  :PROPERTIES:
+  :BEAMER_env: frame
+  :END:
+
++ ¿Que pasa si un \(n\)-grama dado \((w_1, \ldots, w_n)\) (obtenido a partir del vocabulario)
+  no se encuentra en el corpus de entrenamiento?
+  \[\Pr(w_1, \ldots, w_n) = 0\]
+  y por lo tanto la probabilidad de cualquier secuencia con dicho \(n\)-grama será 0.
+  (¡Y la perplejidad infinita!)
+  - Problema del método de estimación
+  - Métodos de *suavizado*\vfill
+
++ ¿Que pasa si en el conjunto de prueba (o en la aplicación) existen palabras que no
+  se encuentran en el vocabulario?
+  - Palabras fuera de vocabulario (/OOV words/)
+  - Uso de token espacial (<UNK>)
+  - Necesidad de un /vocabulario cerrado/ \vfill
+
++ Temas fuera del alcance del curso
+
+* Etiquetado secuencial                                             :B_frame:
+  :PROPERTIES:
+  :BEAMER_env: frame
+  :END:
+
+** Problema
+Dada una secuencia de tokens, inferir la secuencia /más probable/
+de etiquetas para cada uno de esos tokens
+
+\vfill
+** Dos Aplicaciones principales
+
++ Etiquetado de /Parte del discurso/ (/POS Tagging/)
+
++ Reconocimiento de entidades (/NER/)
+
+\vfill
+* Etiquetado de parte del discurso                                  :B_frame:
+  :PROPERTIES:
+  :BEAMER_env: frame
+  :END:
+
+  #+ATTR_LATEX: :float t
+  #+ATTR_LaTeX: :width .85\textwidth
+  [[./imagenes/post.png]]
+
++ Etiquetas estándar de acuerdo a [[http://universaldependencies.org][/Universal dependencies/]]
+
++ 17 [[http://universaldependencies.org/u/pos/index.html][etiquetas POS universales]] (todas usadas por español)
+
+#+BEGIN_EXAMPLE
+ADP – AUX – CCONJ – DET – NUM – PART – PRON – SCONJ # Cerrados
+ADJ - ADV - INTJ - NOUN - PROPN - VERB # Abiertos
+PUNCT - SYM - X # Otros
+#+END_EXAMPLE
+
++ 3 corpus etiquetados en español.
+
+* Reconocimiento de entidades                                       :B_frame:
+  :PROPERTIES:
+  :BEAMER_env: frame
+  :END:
+
+
+
+- Etiquetado de nombres propios que pertenecen a clases en el mundo
+  real que tienen nombre propio:
+  + Peronas (=PER=),
+  + Organizaciones (=ORG=),
+  + Localidades (=LOC=),...
+
+- Tambien es común considerar como entidades con nombre a:
+  + Fechas y horas
+
+  + unidades, etc.
+
+- Las entidades pueden ser tan específicas como sea necesario
+
+* Notación IOB para etiquetado                                      :B_frame:
+  :PROPERTIES:
+  :BEAMER_env: frame
+  :END:
+
+
+#+BEGIN_CENTER
+\bf Típicamente codificado en xml
+#+END_CENTER
+
+
+  #+ATTR_LATEX: :float t
+  #+ATTR_LaTeX: :width .90\textwidth
+  [[./imagenes/IOB-chem.png]]
+
+El etiquetado de corpus es una tarea no trivial ([[https://www.mturk.com][realizada a mano]]).
+
+* Idea básica para etiquetado secuencial                            :B_frame:
+  :PROPERTIES:
+  :BEAMER_env: frame
+  :END:
+
+
++ Sea \(x = (x_1, x_2, \ldots, x_T)\) una secuencia de tokens (entradas)
+
++ Sea \(y = (y_1, y_2, \ldots, y_T)\) una secuencia de etiquetas (salidas)
+
++ El problema es encontrar la /secuecia más probable de etiquetas/
+  \(y\) dada la secuencia de tokens \(x\), lo cual se puede hacer:
+
+  - De forma /generativa/
+    \[\arg \max_{y} \Pr(x, y)\]
+
+  - De forma /discriminativa/
+    \[\arg \max_y \Pr(y|x)\]
+
+Solo vamos a establecer muy superficialmente los esquemas de los modelo principales
+
+* Esquema de etiquetado con HMM                                     :B_frame:
+  :PROPERTIES:
+  :BEAMER_env: frame
+  :END:
+
+
+#+BEGIN_CENTER
+\[\Pr(y, x) = \prod_{t=1}^T \Pr(y_t|y_{t-1})\Pr(x_t|y_t) \]
+#+END_CENTER
+
+  #+ATTR_LATEX: :float t
+  #+ATTR_LaTeX: :width .7\textwidth
+  [[./imagenes/hmm.png]]
+
+* Esquema de etiquetado con CRF                                     :B_frame:
+  :PROPERTIES:
+  :BEAMER_env: frame
+  :END:
+
+
+#+BEGIN_CENTER
+\[\Pr(y|x) = \frac{1}{Z(x)} \prod_{t=1}^T \exp\left(\sum_{k=1}^K \theta_k f_k(y_t, y_{t-1}) \sum_{s=1}^S \phi_s F_s(y_t, x_t) \right)\]
+#+END_CENTER
+
+  #+ATTR_LATEX: :float t
+  #+ATTR_LaTeX: :width .7\textwidth
+  [[./imagenes/crf.png]]
+
+
+* Esquema de etiquetado con RNN                                     :B_frame:
+  :PROPERTIES:
+  :BEAMER_env: frame
+  :END:
+
+#+BEGIN_CENTER
+\bf Redes recurrentes bi-direccionales
+#+END_CENTER
+
+
+  #+ATTR_LATEX: :float t
+  #+ATTR_LaTeX: :width \textwidth
+  [[./imagenes/rnn.png]]
+
+
+* Etiquetando con /spacy/                                           :B_frame:
+  :PROPERTIES:
+  :BEAMER_env: frame
+  :END:
+
+  #+ATTR_LATEX: :float t
+  #+ATTR_LaTeX: :width .35\textwidth
+  [[./imagenes/jupyter.png]]

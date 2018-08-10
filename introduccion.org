@@ -1,9 +1,9 @@
 #+STARTUP: beamer
 #+TITLE:     Introducción
 #+AUTHOR:    \href{mailto:julio.waissman@unison.mx}{Julio Waissman}
-#+DATE:      9 de marzo de 2018
+#+DATE:      9 y 10 de agosto de 2018
 #+BEAMER_HEADER: \subtitle{Curso de procesamiento de lenguaje natural}
-#+BEAMER_HEADER: \institute[UNaM/MTI]{Maestría en Tecnologías de la Información\\Universidad Nacional de Misiones}
+#+BEAMER_HEADER: \institute[MTI-UNaM/UNNE]{Maestría en Tecnologías de la Información\\UNaM/UNNE}
 # #+BEAMER_HEADER: \titlegraphic{\includegraphics[height=1.5cm]{~/.emacs.d/julio/org/letragrama.png}}
 #+BEAMER_HEADER: \titlegraphic{\includegraphics[width=0.8\textwidth]{imagenes/cabecera.png}}
 
@@ -98,14 +98,13 @@ Procesamiento automático (o semi-automático) del lenguaje humano
   - Gramáticas libres de contexto \vfill
 
 + Probabilista
-  - Modelos de $n$-gramas
+  - Modelos de \(n\)-gramas
   - Clasificadores lineales
   - Métodos basados en maximización de la verosimilitud \vfill
 
 + Aprendizaje profundo
   - Redes convolucionales
   - Redes recurrentes \vfill
-
 
 * ¿Que esperar de este curso?                                       :B_frame:
   :PROPERTIES:

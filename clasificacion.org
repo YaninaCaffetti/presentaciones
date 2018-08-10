@@ -1,9 +1,9 @@
 #+STARTUP: beamer
 #+TITLE:     Clasificación de documentos
 #+AUTHOR:    \href{mailto:julio.waissman@unison.mx}{Julio Waissman}
-#+DATE:      9 de marzo de 2018
+#+DATE:      9 y 10 de agosto de 2018
 #+BEAMER_HEADER: \subtitle{Curso de procesamiento de lenguaje natural}
-#+BEAMER_HEADER: \institute[UNaM/MTI]{Maestría en Tecnologías de la Información\\Universidad Nacional de Misiones}
+#+BEAMER_HEADER: \institute[MTI-UNaM/UNEE]{Maestría en Tecnologías de la Información\\UNaM/UNEE}
 # #+BEAMER_HEADER: \titlegraphic{\includegraphics[height=1.5cm]{~/.emacs.d/julio/org/letragrama.png}}
 #+BEAMER_HEADER: \titlegraphic{\includegraphics[width=0.8\textwidth]{imagenes/cabecera.png}}
 
@@ -99,10 +99,11 @@ Se pueden agregar pares de tokens, tripletas, ...
    \[tfidf(t, d, D) = tf(t, d) \cdot idf(t, D)\]
    y se normalizan los valores para todos los documentos
 
-* Revisemos el ejemplo
+* Revisemos el ejemplo                                              :B_frame:
   :PROPERTIES:
   :BEAMER_env: frame
   :END:
+
   #+ATTR_LATEX: :float t
   #+ATTR_LaTeX: :width .35\textwidth
   [[./imagenes/jupyter.png]]

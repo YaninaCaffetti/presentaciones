@@ -1,0 +1,228 @@
+#+STARTUP: beamer
+#+TITLE:     Semántica distribuida
+#+AUTHOR:    \href{mailto:julio.waissman@unison.mx}{Julio Waissman}
+#+DATE:      9 y 10 de agosto de 2018
+#+BEAMER_HEADER: \subtitle{Curso de procesamiento de lenguaje natural}
+#+BEAMER_HEADER: \institute[MTI-UNaM/UNEE]{Maestría en Tecnologías de la Información\\UNaM/UNEE}
+# #+BEAMER_HEADER: \titlegraphic{\includegraphics[height=1.5cm]{~/.emacs.d/julio/org/letragrama.png}}
+#+BEAMER_HEADER: \titlegraphic{\includegraphics[width=0.8\textwidth]{imagenes/cabecera.png}}
+
+
+#+DESCRIPTION: PLN para la MTI de la UNaM
+#+LANGUAGE:  es
+
+#+INCLUDE: "setup.org"
+
+* Similaridad entre palabras                                        :B_frame:
+  :PROPERTIES:
+  :BEAMER_env: frame
+  :END:
+
+- Dos palabras (tokens) son más similares si comparten más características de significado \vfill
+- Es una relación entre los sentidos de las palabras \vfill
+- Es posible calcular la similaridad entre palabras con un *thesaurus* \vfill
+- Funciona bien con sustantivos, pero no con adjetivos o verbos \vfill
+- Es difícil y en muchas ocasiones el contexto es diferente \vfill
+
+#+BEGIN_CENTER
+\bf Se puede conocer una palabra por su compañía
+#+END_CENTER
+
+* Modelos distribuidos                                              :B_frame:
+  :PROPERTIES:
+  :BEAMER_env: frame
+  :END:
+
+- Estudiar las palabras por su contexto (en una ventana de tamaño fijo)
+
+- Calcular las coocurrencias en el corpus de las palabras \(u\) y \(v\) dentro de
+  la misma ventana \(n_{uv}\)
+
+- Calcular la inforación mutua palabra a palabra (PMI, por /Pointwise
+  Mutual Information/) \[PMI = \log\frac{\Pr(u,v)}{\Pr(u)\Pr(v)} =
+  \log\frac{n_{uv}n}{n_u n_v}\] donde \(n\) es el número de palabras
+  del corpus, \(n_u\) y \(n_v\) son el número de veces que aparecen
+  las palabras \(u\) y \(v\) respectivamente.
+
+- Usar solo la parte positiva (pPMI)
+\[pPMI = \max(0, PMI)\]
+
+* Semantica distribuida por métodos lineales (SVD)                  :B_frame:
+  :PROPERTIES:
+  :BEAMER_env: frame
+  :END:
+
+- Se basa en una matriz de similaridad entre palabras (PMI, cuentas, ...)
+- Reduccion de la dimensionalidad por SVD
+- Resultado: Una matriz \Phi de dimensión \(W \times d\) tal que el
+  renglón \(i\) de la matriz es un vector de dimensión \(d\) que
+  codifica la palabra \(w_i\) del vocabulario
+
+  #+ATTR_LATEX: :float t
+  #+ATTR_LaTeX: :width .85\textwidth
+  [[./imagenes/VW1.png]]
+
+* Semantica distribuida por optimización (GloVe)                    :B_frame:
+  :PROPERTIES:
+  :BEAMER_env: frame
+  :END:
+
+En lugar de estimar directamente la matriz \Phi, se infiere del problema de optimización
+\[ \max_{\Phi, \Theta, b, b'} \sum_{u\in V} \sum_{v \in V} f(n_{uv})(\phi_u^T \theta_v + b_u + b'_v - \log n_{uv})^2\]
+
+donde \(f: [0, \infty] \to [0, 1]\) es una función de saturación
+
+- La función a optimizar es cuadrática y existen métodos bien desarrollados para solucionarlo.
+
+- No deja de ser computacionalmente costoso (en tiempo y memoria)
+
+- Solamente se basa en la matriz de coocurrencias
+
+- Uno de los primeros métodos desarrollados mas allá de la descomposición matricial en valores singulares.
+
+* Métodos tipo word2vec                                             :B_frame:
+  :PROPERTIES:
+  :BEAMER_env: frame
+  :END:
+
+- Basados en la clasificación correcta de palabras en lugar de matrices de similaridad \vfill
+
+- Se basa en el contexto sobre una ventana deslizante \vfill
+
+- Dos estratégias básicas
+
+  1. /Continous BOW (CBOW)/. Se basa en encontrar la probabilidad de
+     una palabra, dado su contexto \[\Pr(w_i|w_{i-n}, \ldots, w_{i-1},
+     w_{i + 1}, \ldots, w_{i + n})\]
+
+  2. /Skip-gram/. Se trata de encontrar el contexto de una palabra, si conociéramos la palabra
+     \[\Pr(w_{i-n}, \ldots, w_{i-1}, w_{i + 1}, \ldots, w_{i + n}|w_i)\]
+
+* CBOW y Skip-gram                                                  :B_frame:
+  :PROPERTIES:
+  :BEAMER_env: frame
+  :END:
+
+  #+ATTR_LATEX: :float t
+  #+ATTR_LaTeX: :width .95\textwidth
+  [[./imagenes/cbow.png]]
+
+* Skip-gram                                                         :B_frame:
+  :PROPERTIES:
+  :BEAMER_env: frame
+  :END:
+
+  #+ATTR_LATEX: :float t
+  #+ATTR_LaTeX: :width .85\textwidth
+  [[./imagenes/skipgram.png]]
+
+\[\Pr(c|w) = \frac{\exp(\phi_w^T\theta_c)}{\sum_{v \in
+V}\exp(\phi_w^T\theta_v)}, \quad \phi_w, \theta_v \in \mathbb{R}^d \]
+
+Si tenemos un corpus \((w_1, w_2, \ldots, w_T)\) entonces \Phi se obtiene de resolver
+\[
+min_{\Phi, \Theta} -\sum_{t=1}^T\sum_{c \in \mathcal{C}_t} \log\frac{\exp(\phi_{w_t}^T\theta_c)}{\sum_{v \in V}\exp(\phi_{w_t}^T\theta_v)}
+\]
+donde \(\mathcal{C}_t\) son las palabras de contexto de \(w_t\).
+
+* CBOW                                                              :B_frame:
+  :PROPERTIES:
+  :BEAMER_env: frame
+  :END:
+
+  #+ATTR_LATEX: :float t
+  #+ATTR_LaTeX: :width .85\textwidth
+  [[./imagenes/cbow2.png]]
+
+\[\Pr(c|w) = \frac{\exp(h_w^T\theta_w)}{\sum_{v \in
+V}\exp(h_w^T\theta_c)}, \quad h_w, \theta_v \in \mathbb{R}^d \]
+
+donde
+
+\[h_w = \sum_{c \in \mathcal{C}_w}\phi_c\]
+
+* FastText                                                          :B_frame:
+  :PROPERTIES:
+  :BEAMER_env: frame
+  :END:
+
+  #+ATTR_LATEX: :float t
+  #+ATTR_LaTeX: :width .45\textwidth
+  [[./imagenes/fasttext.png]]
+
+\[\Pr(c|w) = \frac{\exp(h_w^T\theta_c)}{\sum_{v \in
+V}\exp(h_w^T\theta_v)}, \quad h_w, \theta_v \in \mathbb{R}^d \]
+
+donde
+\[h_w = \sum_{g \in w} x_g, \quad x_g \in \mathbb{R}^d\]
+es la suma de n-gramas de caracteres
+
+
+#+BEGIN_CENTER
+*FastText permite estimar vectores para palabras OOV*
+#+END_CENTER
+
+* Similaridad entre palabras                                        :B_frame:
+  :PROPERTIES:
+  :BEAMER_env: frame
+  :END:
+
+- Dado un par de palabras, encontrar su similaridad. \vfill
+
+- La similaridad de las palabras no depende de la distancia entre sus
+  vectores, si no de *el angulo entre vectores*. \vfill
+
+- Similaridad coseno:
+  \[s(w, v) = \frac{\phi_{w}^T \phi_{v}}{\|\phi_w\|_2 \|\phi_v\|_2}\] \vfill
+
+- Funciona bien para lenguajes morfológicamente ricos (como el español) \vfill
+
+* Analogías                                                         :B_frame:
+  :PROPERTIES:
+  :BEAMER_env: frame
+  :END:
+
+- Sea /a/ y /a'/ dos palabras, tenemos la palabra /b/ y
+  queremos encontrar /b'/ que tenga una relación con /b/ análoga a la
+  que tienen /a/ y /a'/, por ejemplo
+
+  #+BEGIN_CENTER
+  =hombre=  es a =rey=  lo que =mujer= es a =?=
+  #+END_CENTER
+
+- En forma de vectores de palabras se podría expresar como:
+  \[ \phi_a - \phi_{a'} \approx \phi_b - \phi_{b'}, \]
+  y por lo tanto,
+  \[ \phi_{b`} \approx \phi_{a'} - \phi_a + \phi_b\]
+
+- Tomando en cuenta la similaridad coseno
+  \[b' = \arg \max_{x \notin \{a, a`, b\}} \cos(b - a + a', x)\]
+
+- Funciona relativamente bien para analogías sintácticas
+
+
+* Codificación de sentencias o textos                               :B_frame:
+  :PROPERTIES:
+  :BEAMER_env: frame
+  :END:
+
+- Existen métodos para entrenar sentencias. \vfill
+
+- En la práctica, se prueba primero generar un vector por sentencia \vfill
+
+Sea \(s = (w_1, \ldots, w_T)\) una /sentencia/ o /frase/, la cual está
+compuesta de una serie de palabras o tokens. Entonces, la sentencia se puede codificar como:
+
+\[\phi_s = \frac{1}{T}\sum_{t=1}^T \phi_{w_t}\] \vfill
+
+- Nada más se toman en cuenta los tokens que existen en el vocabulario \vfill
+
+- Suele funcionar extrañamente bien \vfill
+
+* Veamos unos ejemplos                                              :B_frame:
+  :PROPERTIES:
+  :BEAMER_env: frame
+  :END:
+  #+ATTR_LATEX: :float t
+  #+ATTR_LaTeX: :width .45\textwidth
+  [[./imagenes/jupyter.png]]

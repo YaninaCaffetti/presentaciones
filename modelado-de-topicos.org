@@ -1,0 +1,162 @@
+#+STARTUP: beamer
+#+TITLE:     Modelado de tópicos
+#+AUTHOR:    \href{mailto:julio.waissman@unison.mx}{Julio Waissman}
+#+DATE:      9 y 10 de agosto de 2018
+#+BEAMER_HEADER: \subtitle{Curso de procesamiento de lenguaje natural}
+#+BEAMER_HEADER: \institute[MTI-UNaM/UNEE]{Maestría en Tecnologías de la Información\\UNaM/UNEE}
+# #+BEAMER_HEADER: \titlegraphic{\includegraphics[height=1.5cm]{~/.emacs.d/julio/org/letragrama.png}}
+#+BEAMER_HEADER: \titlegraphic{\includegraphics[width=0.8\textwidth]{imagenes/cabecera.png}}
+
+
+#+DESCRIPTION: PLN para la MTI de la UNaM
+#+LANGUAGE:  es
+
+#+INCLUDE: "setup.org"
+
+* ¿Que es modelado de tópicos?                                      :B_frame:
+  :PROPERTIES:
+  :BEAMER_env: frame
+  :END:
+
+  #+ATTR_LATEX: :float t
+  #+ATTR_LaTeX: :width \textwidth
+  [[./imagenes/topic.png]]
+
+* Definición formal                                                 :B_frame:
+  :PROPERTIES:
+  :BEAMER_env: frame
+  :END:
+
+- *Dado*:
+  + \(\{d_1, \ldots, d_D\}\) un conjunto de documentos (corpus),
+  + \(\{w_1, \ldots, \w_W\}\) un conjunto de palabras (vocabulario),
+  + \(n_{dw}\) el número de veces que la palabra \(w\) aparece en el documento \(d\)\vfill
+
+- *Encontrar*:
+  + Para un conjunto de $T$ tópicos \(\{t_1, \ldots, t_T\}\)
+  + \(\phi_{wt} = \Pr(w|t)\) una distribución de palabras en cada tópico,
+  + \(\theta_{td} = \Pr(t|d)\) una distribución de tópicos por cada documento \vfill
+
+- *Basado en las hipótesis*:
+  + Un /tópico/ es un conjunto coherente de palabras que co-ocurren en un subconjunto de documentos
+  + Un documento está representado con una BOW con cuentas (o proporcional)
+  + Toda palabra observada en un documento tiene un /tópico latente/\vfill
+
+* ¿Para qué sirve el modelado de tópicos?                           :B_frame:
+  :PROPERTIES:
+  :BEAMER_env: frame
+  :END:
+
+#+BEGIN_CENTER
+\bf El modelado de tópicos provée una representación semántica
+inherente a un conjunto de documentos
+#+END_CENTER
+
+Se utiliza en:
+
+1. Categorización de textos
+2. Agregación y resumen de noticias
+3. Sistemas de recomendación
+4. Recuperación de la información
+5. Segmentación de corpus
+
+* Modelo probabilístico                                             :B_frame:
+  :PROPERTIES:
+  :BEAMER_env: frame
+  :END:
+
+1. Ley de probabilodad total (marginalización)
+   \[\Pr(w) = \sum_{t \in T} \Pr(w|t)\Pr(t)\]
+
+2. Hipótesis de independencia condicional
+   \[\Pr(w|t, d) = \Pr(w|t)\]
+
+** Planteamiento                                                    :B_block:
+   :PROPERTIES:
+   :BEAMER_env: block
+   :END:
+   \[\Pr(w|d) = \sum_{t \in T} \Pr(w|t, d) \Pr(t|d) = \sum_{t \in T} \Pr(w|t)\Pr(t|d) = \phi_{wt}\theta_{td}\]
+* Visto en forma matricial                                          :B_frame:
+  :PROPERTIES:
+  :BEAMER_env: frame
+  :END:
+  #+ATTR_LATEX: :float t
+  #+ATTR_LaTeX: :width .9\textwidth
+  [[./imagenes/plsa.png]]
+
+#+BEGIN_CENTER
+\bf El problema de descomposición matricial en este caso está
+pobremente definido, y hay que utilizar algún criterio de optimización
+para encontrar las matrices \Phi y \Theta
+#+END_CENTER
+
+* PLSA                                                              :B_frame:
+  :PROPERTIES:
+  :BEAMER_env: frame
+  :END:
+
+** Se optimiza la verosimilitud logarítmica
+   \[\Phi^*, \Theta^* = \arg \max_{\Phi, \Theta} \sum_{d} \sum_{w \in
+   d} n_{dw} \log \sum_{t}\phi_{wt}\theta_{td}\] \vfill
+
+
+** sin titulo                                               :B_ignoreheading:
+   :PROPERTIES:
+   :BEAMER_env: ignoreheading
+   :END:
+#+BEGIN_CENTER
+\bf Si conociéramos los tópicos sería muy parecido a los vectores de
+palabra, pero resulta que solo sabemos el número de tópicos que
+imponemos \vfill
+#+END_CENTER
+
+* Algoritmo EM                                                      :B_frame:
+  :PROPERTIES:
+  :BEAMER_env: frame
+  :END:
+
+** Expectation
+
+\[\Pr(t|d,w) = \frac{\Pr(w|t)\Pr(t|d)}{\Pr(w|d)} = \frac{\phi_{wt}\theta_{td}}{\sum_{s}\phi_{ws}\theta_{sd}}\]\vfill
+
+** Maximization
+
+\[\phi_{wt} = \frac{n_{wt}}{\sum_{v}n_{vt}} \quad \text{donde} \quad n_{wt} = \sum_{d}n_{dw}\Pr(t|d,w)\]
+\[\theta_{td} = \frac{n_{td}}{\sum_{t'}n_{t'd}} \quad \text{donde} \quad n_{td} = \sum_{w}n_{dw}\Pr(t|d,w)\]\vfill
+
+* Latent Dirichlet Allocation (LDA)                                 :B_frame:
+  :PROPERTIES:
+  :BEAMER_env: frame
+  :END:
+
+  #+ATTR_LATEX: :float t
+  #+ATTR_LaTeX: :width .75\textwidth
+  [[./imagenes/lda.png]]
+
+1. La distribución de palabras para el tópico \(t\) (\(\phi_t\), el \(t\)-ésimo un renglón de \Phi) es
+   generada por una distribución de /Dirichlet/ con parámetros \(\beta \in \mathbb{R}^W\)
+
+2. La distribución de tópicos para el documento \(d\) (\(\theta_d\) una columna de \Theta) también se genera a partir
+   de una distribución de /Dirichlet/ con parámetros \(\alpha \in \mathbb{R}^T\)
+
+* Modelado de tópicos multimodal                                    :B_frame:
+  :PROPERTIES:
+  :BEAMER_env: frame
+  :END:
+
+  #+ATTR_LATEX: :float t
+  #+ATTR_LaTeX: :width .85\textwidth
+  [[./imagenes/mmtm.png]]
+
+#+BEGIN_CENTER
+Biblioteca especializada /BigARTM/ en [[http://bigartm.org][http://bigartm.org]]
+#+END_CENTER
+
+* Revisemos el modelado de tópicos                                  :B_frame:
+  :PROPERTIES:
+  :BEAMER_env: frame
+  :END:
+
+  #+ATTR_LATEX: :float t
+  #+ATTR_LaTeX: :width .35\textwidth
+  [[./imagenes/jupyter.png]]
